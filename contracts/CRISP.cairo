@@ -138,16 +138,7 @@ func constructor{
     let (denom: felt) = Math64x61_sub(fp_one, two_exp)
     
     let (_targetEMS: felt) = Math64x61_div(fp_one, denom)
-
-    # let (_targetEMS: felt) = Math64x61_div(Math64x61_fromFelt(1), 
-    #                             Math64x61_sub(Math64x61_fromFelt(1),
-    #                                 Math64x61__pow_int(Math64x61_fromFelt(2), 
-    #                                     Math64x61_div(
-    #                                         Math64x61_sub(
-    #                                             Math64x61_fromFelt(0),_targetBlocksPerSale),saleHalfLife))))
-
-
-    # let (_targetEMS: felt) = Math64x61_fromFelt(1)
+    
     targetEMS.write(_targetEMS)
     nextPurchaseStartingEMS.write(_targetEMS)
     nextPurchaseStartingPrice.write(_startingPrice)
@@ -281,7 +272,8 @@ func mint{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() -> 
     # no such thing as msg.value on starknet yet
 
     # update state
-    let next_purchase_starting_ems: felt = Math64x61_add(getCurrentEMS, fp_one)
+    let (get_current_ems: felt) = getCurrentEMS()
+    let next_purchase_starting_ems: felt = Math64x61_add(get_current_ems, fp_one)
     let (next_purchase_starting_price: felt) = getNextStartingPrice(price)
     let (price_decay_start_block: felt) = getPriceDecayStartBlock()
 
