@@ -1,0 +1,124 @@
+[
+    {
+        "inputs": [
+            {
+                "name": "a",
+                "type": "(felt, felt, felt)"
+            },
+            {
+                "name": "b",
+                "type": "(felt, felt, felt)"
+            }
+        ],
+        "name": "Vec64x61_add_test",
+        "outputs": [
+            {
+                "name": "res",
+                "type": "(felt, felt, felt)"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "a",
+                "type": "(felt, felt, felt)"
+            },
+            {
+                "name": "b",
+                "type": "(felt, felt, felt)"
+            }
+        ],
+        "name": "Vec64x61_sub_test",
+        "outputs": [
+            {
+                "name": "res",
+                "type": "(felt, felt, felt)"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "a",
+                "type": "(felt, felt, felt)"
+            },
+            {
+                "name": "b",
+                "type": "felt"
+            }
+        ],
+        "name": "Vec64x61_mul_test",
+        "outputs": [
+            {
+                "name": "res",
+                "type": "(felt, felt, felt)"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "a",
+                "type": "(felt, felt, felt)"
+            },
+            {
+                "name": "b",
+                "type": "(felt, felt, felt)"
+            }
+        ],
+        "name": "Vec64x61_dot_test",
+        "outputs": [
+            {
+                "name": "res",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "a",
+                "type": "(felt, felt, felt)"
+            },
+            {
+                "name": "b",
+                "type": "(felt, felt, felt)"
+            }
+        ],
+        "name": "Vec64x61_cross_test",
+        "outputs": [
+            {
+                "name": "res",
+                "type": "(felt, felt, felt)"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "a",
+                "type": "(felt, felt, felt)"
+            }
+        ],
+        "name": "Vec64x61_norm_test",
+        "outputs": [
+            {
+                "name": "res",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    }
+]

@@ -1,0 +1,3 @@
+0x03b3d3926ea4187f3d1bc1ac737bb49594f22484d958ddf6c53f09404ed7ea93:artifacts/abis/CRISP.json
+0x02c910d27be3c481dc65bbca2f5a23aaf9889d5917cfb6c90fe86be9707701da:artifacts/abis/CRISP.json
+0x042bb0ca2bdc20bf79f86b359d5c5106bef135ec9c694fd7cc1dbce10b253b57:artifacts/abis/CRISP.json

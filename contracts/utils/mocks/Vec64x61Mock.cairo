@@ -1,6 +1,6 @@
 %lang starknet
 
-from Vec64x61 import (
+from contracts.utils.Vec64x61 import (
     Vec64x61_add,
     Vec64x61_sub,
     Vec64x61_mul,

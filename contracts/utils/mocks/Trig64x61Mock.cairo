@@ -1,6 +1,6 @@
 %lang starknet
 
-from Trig64x61 import (
+from contracts.utils.Trig64x61 import (
     Trig64x61_sin,
     Trig64x61_cos,
     Trig64x61_tan,

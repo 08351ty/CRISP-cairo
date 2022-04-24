@@ -1,6 +1,6 @@
 %lang starknet
 
-from Math64x61 import (
+from contracts.utils.Math64x61 import (
     Math64x61_ONE,
     Math64x61_mul,
     Math64x61_div,

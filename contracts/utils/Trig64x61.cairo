@@ -2,7 +2,7 @@
 
 from starkware.cairo.common.math_cmp import is_le
 from starkware.cairo.common.math import sign, abs_value, unsigned_div_rem, assert_not_zero
-from Math64x61 import (
+from contracts.utils.Math64x61 import (
     Math64x61_FRACT_PART,
     Math64x61_ONE,
     Math64x61_mul,

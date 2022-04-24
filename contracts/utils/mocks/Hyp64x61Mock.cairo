@@ -1,6 +1,6 @@
 %lang starknet
 
-from Hyp64x61 import (
+from contracts.utils.Hyp64x61 import (
     Hyp64x61_sinh,
     Hyp64x61_cosh,
     Hyp64x61_tanh,
