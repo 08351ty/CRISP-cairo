@@ -31,6 +31,7 @@ CONTRACT_FILE = os.path.join("contracts", "CRISP.cairo")
 
 async def contract_factory():
     starknet = await Starknet.empty()
+    set_block_number(starknet.state, 0, 10)
     contract = await starknet.deploy(
         source=CONTRACT_FILE,
         constructor_calldata=[
@@ -43,6 +44,15 @@ async def contract_factory():
             STARTINGPRICE
         ]
     )
+    tgtems = await contract.getTargetEMS().call()
+    shl = await contract.getSaleHalfLife().call()
+    ps = await contract.getPriceSpeed().call()
+    phl = await contract.getPriceHalfLife().call()
+
+    print("\nTarget EMS: " + str(tgtems.result))
+    print("Sale Half Life: " + str(shl.result))
+    print("Price Speed: " + str(ps.result))
+    print("Price Half Life: " + str(phl.result))
 
     # account = await starknet.deploy(
     #     "contracts/Account.cairo",
@@ -85,34 +95,36 @@ async def contract_factory():
 #     return crisp
 
 
+
 ##########
 # TEST 1 #
 ##########
 # test starting price
-# @pytest.mark.asyncio
-# async def test_starting_price():
-#     starknet, contract = await contract_factory()
-#     logger.debug('test_starting_price...')
-#     print("=========test_starting_price============")
-#     price = await contract.getQuote().call()
-#     print("test_starting_price: " + str(price.result))
-#     assert (price.result == (STARTINGPRICE, ))
-
-##########
-# TEST 2 #
-##########
-# test price doesn't decay when above target sales rate
 @pytest.mark.asyncio
-async def test_price_decay_above_target_rate():
+async def test_starting_price():
     starknet, contract = await contract_factory()
-    # block_info = await block_info_mock()
-    logger.debug("test_price_decay_above_target_rate")
-    print("=========test_price_decay_above_target_rate============")
-    contract.mint()
-    initial_price = await contract.getQuote().call()
-    # set_block_number(starknet.state, 50, 11)
-    final_price = await contract.getQuote().call()
-    assert (initial_price.result == final_price.result)
+    logger.debug('test_starting_price...')
+    print("=========test_starting_price============")
+    #price = await contract.getQuote().call()
+    #print("test_starting_price: " + str(price.result))
+    #assert (price.result == (STARTINGPRICE, ))
+
+# ##########
+# # TEST 2 #
+# ##########
+# # test price doesn't decay when above target sales rate
+# @pytest.mark.asyncio
+# async def test_price_decay_above_target_rate():
+#     starknet, contract = await contract_factory()
+#     # block_info = await block_info_mock()
+#     logger.debug("test_price_decay_above_target_rate")
+#     print("=========TEST 1: test_price_decay_above_target_rate============\n")
+#     contract.mint()
+#     initial_price = await contract.getQuote().call()
+#     # set_block_number(starknet.state, 50, 11)
+#     final_price = await contract.getQuote().call()
+#     assert (initial_price.result == final_price.result)
+#     print("========TEST 1: SUCCESSFUL============\n")
 
 ##########
 # TEST 3 #
@@ -124,31 +136,44 @@ async def test_price_decay_below_target_rate():
     # block_info = await block_info_mock()
     logger.debug("test_price_decay_below_target_rate")
     print("=========test_price_decay_below_target_rate")
+    pdsb = await contract.getPriceDecayStartBlock().call()
+    print(">>>>>>get_price_decay_start_block: " + str(pdsb.result))
+    gc_ems = await contract.getCurrentEMS().call()
+    tgtems = await contract.getTargetEMS().call()
+    print("\nTarget EMS: " + str(tgtems.result) + " AND Current EMS: " + str(gc_ems.result))
     contract.mint()
+    print("minted")
+    
     initial_price = await contract.getQuote().call()
-    print("initial_price: " + str(initial_price.result))
-    print(">>>>>>block_number_initial: " + str(starknet.state.state.block_info.block_number) + "<<<<<<<<<<<<")
+    #print("initial_price: " + str(initial_price.result))
+    #print(">>>>>>block_number_initial: " + str(starknet.state.state.block_info.block_number) + "<<<<<<<<<<<<")
     set_block_number(starknet.state, 50, 10)
-    print(">>>>>>block_number_final: " + str(starknet.state.state.block_info.block_number) + "<<<<<<<<<<<<")
+    contract.mint()
+    #print(">>>>>>block_number_final: " + str(starknet.state.state.block_info.block_number) + "<<<<<<<<<<<<")
     # print(">>>>>>current_ems: " + str(await contract.getCurrentEMS().call().result) + "<<<<<<<<<<<<")
     final_price = await contract.getQuote().call()
+    pdsb = await contract.getPriceDecayStartBlock().call()
+    print(">>>>>>get_price_decay_start_block: " + str(pdsb.result))
+    #gc_ems = await contract.getCurrentEMS().call()
+    #tgtems = await contract.getTargetEMS().call()
+    #print("\nTarget EMS: " + str(tgtems.result) + " AND Current EMS: " + str(gc_ems.result))
     #print("final_price: " + str(final_price.result))
-    #assert (initial_price.result > final_price.result)
+    assert (initial_price.result > final_price.result)
 
-# ##########
-# # TEST 4 #
-# ##########
-# # test price decays when actual sales rate below target sales rate
+##########
+# TEST 4 #
+##########
+# test price decays when actual sales rate below target sales rate
 # @pytest.mark.asyncio
 # async def test_price_increase_above_target_rate():
 #     starknet, contract = await contract_factory()
 #     # block_info = await block_info_mock()
 #     logger.debug("test_price_increase_above_target_rate")
 #     print("=========test_price_increase_above_target_rate============")
-#     # purchaseToken
+#     contract.mint()
 #     set_block_number(starknet.state, 1, 10)
 #     initial_price = await contract.getQuote().call()
-#     # purchaseToken
+#     contract.mint()
 #     final_price = await contract.getQuote().call()
 #     assert (initial_price.result < final_price.result)
 
@@ -164,6 +189,18 @@ def set_block_timestamp(self, block_timestamp, gas_price):
     self.state.block_info = BlockInfo(
         self.state.block_info.block_number, block_timestamp, gas_price
     )
+
+async def crisp_params():
+    starknet, contract = await contract_factory()
+    tgtems = await contract.getTargetEMS().call()
+    shl = await contract.getSaleHalfLife().call()
+    ps = await contract.getPriceSpeed().call()
+    phl = await contract.getPriceHalfLife().call()
+
+    print("\nTarget EMS: " + str(tgtems.result) + "\n")
+    print("Sale Half Life: " + str(shl.result) + "\n")
+    print("Price Speed: " + str(ps.result) + "\n")
+    print("Price Half Life: " + str(phl.result) + "\n")
 
 
 # async def purchase_tokens():

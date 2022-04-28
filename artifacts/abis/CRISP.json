@@ -178,5 +178,53 @@
         ],
         "stateMutability": "view",
         "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "getTargetEMS",
+        "outputs": [
+            {
+                "name": "i",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "getSaleHalfLife",
+        "outputs": [
+            {
+                "name": "i",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "getPriceSpeed",
+        "outputs": [
+            {
+                "name": "i",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "getPriceHalfLife",
+        "outputs": [
+            {
+                "name": "i",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
     }
 ]

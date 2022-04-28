@@ -210,7 +210,6 @@ func Math64x61_exp2 {range_check_ptr} (x: felt) -> (res: felt):
     alloc_locals
 
     let (exp_sign) = sign(x)
-
     if exp_sign == 0:
         return (Math64x61_ONE)
     end
