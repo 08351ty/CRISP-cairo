@@ -128,14 +128,12 @@ async def test_price_decay_below_target_rate():
     initial_price = await contract.getQuote().call()
     print("initial_price: " + str(initial_price.result))
     print(">>>>>>block_number_initial: " + str(starknet.state.state.block_info.block_number) + "<<<<<<<<<<<<")
-    print(">>>>>>block_timestamp_initial: " + str(starknet.state.state.block_info.block_timestamp) + "<<<<<<<<<<<<")
-    set_block_timestamp(starknet.state, 1000000000000000, 10)
     set_block_number(starknet.state, 50, 10)
     print(">>>>>>block_number_final: " + str(starknet.state.state.block_info.block_number) + "<<<<<<<<<<<<")
-    print(">>>>>>block_timestamp_final: " + str(starknet.state.state.block_info.block_timestamp) + "<<<<<<<<<<<<")
+    # print(">>>>>>current_ems: " + str(await contract.getCurrentEMS().call().result) + "<<<<<<<<<<<<")
     final_price = await contract.getQuote().call()
-    print("final_price: " + str(final_price.result))
-    # assert (initial_price.result > final_price.result)
+    #print("final_price: " + str(final_price.result))
+    #assert (initial_price.result > final_price.result)
 
 # ##########
 # # TEST 4 #

@@ -196,10 +196,10 @@ func getQuote{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}
         let (decay_interval: felt) = Math64x61_fromFelt(before_or_after)
         let (neg_di: felt) = Math64x61_sub(fp_zero, decay_interval)
         let (decay: felt) = Math64x61_div(neg_di, price_half_life)
-        let (exp_decay: felt) = Math64x61_exp(decay)
-        let (x: felt) = Math64x61_mul(next_purchase_starting_price, exp_decay)
+        let (exp_decay: felt) = Math64x61_exp(before_or_after)
+        # let (x: felt) = Math64x61_mul(next_purchase_starting_price, exp_decay)
         tempvar range_check_ptr = range_check_ptr
-        result = x
+        # result = x
     end
     return (result)
 
