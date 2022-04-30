@@ -133,9 +133,7 @@ async def test_starting_price():
 @pytest.mark.asyncio
 async def test_price_decay_below_target_rate():
     starknet, contract = await contract_factory()
-    # block_info = await block_info_mock()
-    logger.debug("test_price_decay_below_target_rate")
-    print("=========test_price_decay_below_target_rate")
+    print("=========test_price_decay_below_target_rate=======================")
     pdsb = await contract.getPriceDecayStartBlock().call()
     print(">>>>>>get_price_decay_start_block: " + str(pdsb.result))
     gc_ems = await contract.getCurrentEMS().call()
