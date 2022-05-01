@@ -139,6 +139,8 @@ async def test_price_decay_below_target_rate():
     gc_ems = await contract.getCurrentEMS().call()
     tgtems = await contract.getTargetEMS().call()
     print("\nTarget EMS: " + str(tgtems.result) + " AND Current EMS: " + str(gc_ems.result))
+    npse = await contract.getNextPurchaseStartingEMS.call()
+    print ("NPSE: " + str(npse.result))
     contract.mint()
     print("minted")
     
@@ -150,11 +152,16 @@ async def test_price_decay_below_target_rate():
     #print(">>>>>>block_number_final: " + str(starknet.state.state.block_info.block_number) + "<<<<<<<<<<<<")
     # print(">>>>>>current_ems: " + str(await contract.getCurrentEMS().call().result) + "<<<<<<<<<<<<")
     final_price = await contract.getQuote().call()
+
+    gc_ems = await contract.getCurrentEMS().call()
+    tgtems = await contract.getTargetEMS().call()
+    print("\nTarget EMS: " + str(tgtems.result) + " AND Current EMS: " + str(gc_ems.result))
+    npse = await contract.getNextPurchaseStartingEMS.call()
+    print ("NPSE: " + str(npse.result))
+
+
     pdsb = await contract.getPriceDecayStartBlock().call()
     print(">>>>>>get_price_decay_start_block: " + str(pdsb.result))
-    #gc_ems = await contract.getCurrentEMS().call()
-    #tgtems = await contract.getTargetEMS().call()
-    #print("\nTarget EMS: " + str(tgtems.result) + " AND Current EMS: " + str(gc_ems.result))
     #print("final_price: " + str(final_price.result))
     assert (initial_price.result > final_price.result)
 

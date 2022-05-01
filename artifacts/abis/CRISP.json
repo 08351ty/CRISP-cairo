@@ -226,5 +226,53 @@
         ],
         "stateMutability": "view",
         "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "getLastPurchaseBlock",
+        "outputs": [
+            {
+                "name": "i",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "getCurTokenId",
+        "outputs": [
+            {
+                "name": "i",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "getNextPurchaseStartingEMS",
+        "outputs": [
+            {
+                "name": "i",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "getNextPurchaseStartingPrice",
+        "outputs": [
+            {
+                "name": "i",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
     }
 ]

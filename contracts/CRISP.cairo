@@ -344,25 +344,20 @@ end
 # Getters for CRISP state
 @view
 func getLastPurchaseBlock{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() -> (i : felt):
-
-end
-
-@view
-func priceDecayStartBlock{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() -> (i : felt):
-
+    return lastPurchaseBlock.read()
 end
 
 @view
 func getCurTokenId{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() -> (i : felt):
-
+    return curTokenId.read()
 end
 
 @view
 func getNextPurchaseStartingEMS{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() -> (i : felt):
-
+    return nextPurchaseStartingEMS.read()
 end
 
 @view
 func getNextPurchaseStartingPrice{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() -> (i : felt):
-
+    return nextPurchaseStartingPrice.read()
 end
