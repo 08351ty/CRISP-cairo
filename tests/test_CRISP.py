@@ -1,4 +1,5 @@
 """contract.cairo test file."""
+from netrc import NetrcParseError
 import os
 from starkware.starknet.business_logic.state.state import BlockInfo
 from starkware.starknet.definitions.general_config import DEFAULT_GAS_PRICE
@@ -44,15 +45,33 @@ async def contract_factory():
             STARTINGPRICE
         ]
     )
-    tgtems = await contract.getTargetEMS().call()
-    shl = await contract.getSaleHalfLife().call()
-    ps = await contract.getPriceSpeed().call()
-    phl = await contract.getPriceHalfLife().call()
+    # # CRISP parameters
+    # tgtems = await contract.getTargetEMS().call()
+    # shl = await contract.getSaleHalfLife().call()
+    # ps = await contract.getPriceSpeed().call()
+    # phl = await contract.getPriceHalfLife().call()
 
-    print("\nTarget EMS: " + str(tgtems.result))
-    print("Sale Half Life: " + str(shl.result))
-    print("Price Speed: " + str(ps.result))
-    print("Price Half Life: " + str(phl.result))
+    # # CRISP state
+    # lpb = await contract.getLastPurchaseBlock().call()
+    # pdsb = await contract.getPriceDecayStartBlock().call()
+    # cti = await contract.getCurTokenId().call()
+    # npse = await contract.getNextPurchaseStartingEMS().call()
+    # npsp = await contract.getNextPurchaseStartingPrice().call()
+
+    # print("CONSTRUCTOR CALLED")
+    # print("###########CRISP PARAMETERS##############")
+    # print("Target EMS: " + str(tgtems.result))
+    # print("Sale Half Life: " + str(shl.result))
+    # print("Price Speed: " + str(ps.result))
+    # print("Price Half Life: " + str(phl.result))
+    # print("----------------------------------------------")
+    # print("###########CRISP STATE###################")
+    # print("Last Purchase Block: " + str(lpb.result))
+    # print("Price Decay Start Block: " + str(pdsb.result))
+    # print("Current Token ID: " + str(cti.result))
+    # print("Next Purchasing Starting EMS: " + str(npse.result))
+    # print("Next Purchase Starting Price: " + str(npsp.result))
+
 
     # account = await starknet.deploy(
     #     "contracts/Account.cairo",
@@ -103,8 +122,7 @@ async def contract_factory():
 @pytest.mark.asyncio
 async def test_starting_price():
     starknet, contract = await contract_factory()
-    logger.debug('test_starting_price...')
-    print("=========test_starting_price============")
+    # print("=========test_starting_price============")
     #price = await contract.getQuote().call()
     #print("test_starting_price: " + str(price.result))
     #assert (price.result == (STARTINGPRICE, ))
@@ -139,27 +157,33 @@ async def test_price_decay_below_target_rate():
     gc_ems = await contract.getCurrentEMS().call()
     tgtems = await contract.getTargetEMS().call()
     print("\nTarget EMS: " + str(tgtems.result) + " AND Current EMS: " + str(gc_ems.result))
-    npse = await contract.getNextPurchaseStartingEMS.call()
-    print ("NPSE: " + str(npse.result))
-    contract.mint()
-    print("minted")
-    
+    test = await contract.mint().call()
+    print("NPSE in mint: " + str(test.result))
+    npse = await contract.getNextPurchaseStartingEMS().call()
+    print("NPSE written: " + str(npse.result))
+    print("minted #1")
+    cti = await contract.getCurTokenId().call()
+    print("curTokenId: " + str(cti.result))
+
     initial_price = await contract.getQuote().call()
-    #print("initial_price: " + str(initial_price.result))
-    #print(">>>>>>block_number_initial: " + str(starknet.state.state.block_info.block_number) + "<<<<<<<<<<<<")
+
     set_block_number(starknet.state, 50, 10)
-    contract.mint()
-    #print(">>>>>>block_number_final: " + str(starknet.state.state.block_info.block_number) + "<<<<<<<<<<<<")
-    # print(">>>>>>current_ems: " + str(await contract.getCurrentEMS().call().result) + "<<<<<<<<<<<<")
+    # await contract.mint().call()
+    # print ("minted #2")
+    cti = await contract.getCurTokenId().call()
+    print("curTokenId: " + str(cti.result))
+
+    test = await contract.mint().call()
+    # print("NPSE in mint: " + str(test.result))
+    # npse = await contract.getNextPurchaseStartingEMS().call()
+    # print("NPSE written: " + str(npse.result))
+    # print("minted #2")
+
+
+    npse = await contract.getNextPurchaseStartingEMS().call()
+    print("Next Purchasing Starting EMS: " + str(npse.result))
+
     final_price = await contract.getQuote().call()
-
-    gc_ems = await contract.getCurrentEMS().call()
-    tgtems = await contract.getTargetEMS().call()
-    print("\nTarget EMS: " + str(tgtems.result) + " AND Current EMS: " + str(gc_ems.result))
-    npse = await contract.getNextPurchaseStartingEMS.call()
-    print ("NPSE: " + str(npse.result))
-
-
     pdsb = await contract.getPriceDecayStartBlock().call()
     print(">>>>>>get_price_decay_start_block: " + str(pdsb.result))
     #print("final_price: " + str(final_price.result))

@@ -115,11 +115,15 @@ func constructor{
     _startingPrice: felt
     ):
     alloc_locals
+    # set curTokenID = 0
+    curTokenId.write(0)
+
     # set vars as block number
     let block_number: felt = get_block_number()
     lastPurchaseBlock.write(block_number)
     priceDecayStartBlock.write(block_number)
 
+    # setting CRISP parameters
     saleHalfLife.write(_saleHalfLife)
     priceSpeed.write(_priceSpeed)
     priceHalfLife.write(_priceHalfLife)
@@ -141,7 +145,10 @@ func constructor{
     let (_targetEMS: felt) = Math64x61_div(fp_one, denom)
     let (tgtEMS: felt) = Math64x61_toFelt(_targetEMS)
     
+    # CRISP parameter set
     targetEMS.write(tgtEMS)
+
+    # CRISP state set
     nextPurchaseStartingEMS.write(tgtEMS)
     nextPurchaseStartingPrice.write(_startingPrice)
 
@@ -274,28 +281,32 @@ func getPriceDecayStartBlock{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, ran
 end
 
 @external
-func mint{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() -> ():
+func mint{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() -> (i: felt):
     alloc_locals
     let (local price: felt) = getQuote()
-    let (local priceScaled: felt) = Math64x61_toFelt(price)
+    let (local priceScaled: felt) = Math64x61_fromFelt(price)
     let (local fp_one: felt) = Math64x61_fromFelt(1)
 
     let (last_purchase_block: felt) = get_block_number()
     
     # no such thing as msg.value on starknet yet
+    let (cti: felt) = curTokenId.read()
+    let incr_cti: felt = cti + 1
+    curTokenId.write(incr_cti)
 
     # update state
     let (get_current_ems: felt) = getCurrentEMS()
     let (gc_ems: felt) = Math64x61_fromFelt(get_current_ems)
     let next_purchase_starting_ems: felt = Math64x61_add(gc_ems, fp_one)
     let (npse: felt) = Math64x61_toFelt(next_purchase_starting_ems)
-    let (next_purchase_starting_price: felt) = getNextStartingPrice(price)
-    let (price_decay_start_block: felt) = getPriceDecayStartBlock()
+    # let (next_purchase_starting_price: felt) = getNextStartingPrice(price)
+    # let (price_decay_start_block: felt) = getPriceDecayStartBlock()
 
-    nextPurchaseStartingEMS.write(npse)
-    nextPurchaseStartingPrice.write(next_purchase_starting_price)
-    priceDecayStartBlock.write(price_decay_start_block)
-    lastPurchaseBlock.write(last_purchase_block)
+    # # updating CRISP state
+    # nextPurchaseStartingEMS.write(npse)
+    # nextPurchaseStartingPrice.write(next_purchase_starting_price)
+    # priceDecayStartBlock.write(price_decay_start_block)
+    # lastPurchaseBlock.write(last_purchase_block)
 
     # hook for caller to do sth with ETH based on price paid
     afterMint(priceScaled)
@@ -303,7 +314,7 @@ func mint{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() -> 
     # issue refund
     # no such thing as msg.value/msg.sender.call on starknet yet
 
-    return ()
+    return (incr_cti)
 end
 
 func afterMint{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(priceScaled: felt) -> ():
@@ -354,7 +365,8 @@ end
 
 @view
 func getNextPurchaseStartingEMS{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() -> (i : felt):
-    return nextPurchaseStartingEMS.read()
+    let (x: felt) = nextPurchaseStartingEMS.read()
+    return (x)
 end
 
 @view

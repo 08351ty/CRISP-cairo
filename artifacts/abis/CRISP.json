@@ -164,7 +164,12 @@
     {
         "inputs": [],
         "name": "mint",
-        "outputs": [],
+        "outputs": [
+            {
+                "name": "i",
+                "type": "felt"
+            }
+        ],
         "type": "function"
     },
     {
