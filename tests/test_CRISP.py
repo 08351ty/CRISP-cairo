@@ -124,33 +124,39 @@ async def test_starting_price():
     starknet, contract = await contract_factory()
     print("=========test_starting_price============")
     price = await contract.getQuote().call()
-    print("test_starting_price: " + str(price.result))
+    # print("test_starting_price: " + str(price.result))
     # assert that starting price == 100 (in FP representation)
     assert (price.result == (230584300921369395200, ))
 
-# ##########
-# # TEST 2 #
-# ##########
-# # test price doesn't decay when above target sales rate
-# @pytest.mark.asyncio
-# async def test_price_decay_above_target_rate():
-#     starknet, contract = await contract_factory()
-#     # block_info = await block_info_mock()
-#     logger.debug("test_price_decay_above_target_rate")
-#     print("=========TEST 1: test_price_decay_above_target_rate============\n")
-#     contract.mint()
-#     initial_price = await contract.getQuote().call()
-#     # set_block_number(starknet.state, 50, 11)
-#     final_price = await contract.getQuote().call()
-#     assert (initial_price.result == final_price.result)
-#     print("========TEST 1: SUCCESSFUL============\n")
-
+##########
+# TEST 2 #
+##########
+# test price doesn't decay when above target sales rate
 @pytest.mark.asyncio
-async def test_get_current_ems():
+async def test_price_decay_above_target_rate():
     starknet, contract = await contract_factory()
-    initial_ems = await contract.getCurrentEMS().call()
-    print("\ninitial EMS = " + str(initial_ems.result))
-    assert(initial_ems.result == (24458342382994991430, ))
+    print("=========TEST 1: test_price_decay_above_target_rate============\n")
+    pdsb = await contract.getPriceDecayStartBlock().call()
+    print("PDSB = " + str(pdsb.result))
+    
+    await contract.mint().invoke()
+    initial_price = await contract.getQuote().call()
+    pdsb = await contract.getPriceDecayStartBlock().call()
+    print("PDSB = " + str(pdsb.result) + "|||| INITIAL_PRICE: " + str(initial_price.result))
+    set_block_number(starknet.state, 50, 11)
+    final_price = await contract.getQuote().call()
+    pdsb = await contract.getPriceDecayStartBlock().call()
+    print("PDSB = " + str(pdsb.result) + "|||| FINAL_PRICE: " + str(final_price.result))
+    
+    assert (initial_price.result == final_price.result)
+    print("========TEST 1: SUCCESSFUL============\n")
+
+# @pytest.mark.asyncio
+# async def test_get_current_ems():
+#     starknet, contract = await contract_factory()
+#     initial_ems = await contract.getCurrentEMS().call()
+#     print("\ninitial EMS = " + str(initial_ems.result))
+#     assert(initial_ems.result == (24458342382994991430, ))
 
 
 # @pytest.mark.asyncio

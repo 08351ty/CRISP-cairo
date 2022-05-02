@@ -205,12 +205,10 @@ func getQuote{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}
         let (neg_di: felt) = Math64x61_sub(0, decay_interval)
         let (decay: felt) = Math64x61_div(neg_di, price_half_life)
         let (exp_decay: felt) = Math64x61_exp(decay)
-        # let (e_decay: felt) = Math64x61_mul(phl, exp_decay)
-        # let (x: felt) = Math64x61_toFelt(e_decay)
         let (res: felt) = Math64x61_mul(next_purchase_starting_price, exp_decay)
 
         tempvar range_check_ptr = range_check_ptr
-        result = res
+        result = 1
     end
     return (result)
 
@@ -257,8 +255,8 @@ func getPriceDecayStartBlock{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, ran
     if mmr_over_one == 0:
         # if mismatch ratio > 1, decay should start in the future
         let (log_two: felt) = Math64x61_log2(mismatchRatio)
-        let (ceiling: felt) = Math64x61_ceil(log_two)
-        let (di: felt) = Math64x61_mul(sale_half_life, ceiling)
+        # let (ceiling: felt) = Math64x61_ceil(log_two)
+        let (di: felt) = Math64x61_mul(sale_half_life, log_two)
         let (decayInterval: felt) = Math64x61_toFelt(di) #di)
         let res: felt = (block_number + decayInterval)
         tempvar range_check_ptr = range_check_ptr
@@ -273,10 +271,9 @@ func getPriceDecayStartBlock{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, ran
 end
 
 @external
-func mint{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() -> (i: felt):
+func mint{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() -> ():
     alloc_locals
     let (local price: felt) = getQuote()
-    let (local priceScaled: felt) = Math64x61_fromFelt(price)
     let (local fp_one: felt) = Math64x61_fromFelt(1)
 
     let (last_purchase_block: felt) = get_block_number()
@@ -288,25 +285,23 @@ func mint{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() -> 
 
     # update state
     let (get_current_ems: felt) = getCurrentEMS()
-    let (gc_ems: felt) = Math64x61_fromFelt(get_current_ems)
-    let next_purchase_starting_ems: felt = Math64x61_add(gc_ems, fp_one)
-    let (npse: felt) = Math64x61_toFelt(next_purchase_starting_ems)
+    let (next_purchase_starting_ems: felt) = Math64x61_add(get_current_ems, fp_one)
     let (next_purchase_starting_price: felt) = getNextStartingPrice(price)
     let (price_decay_start_block: felt) = getPriceDecayStartBlock()
 
     # updating CRISP state
-    nextPurchaseStartingEMS.write(npse)
+    nextPurchaseStartingEMS.write(next_purchase_starting_ems)
     nextPurchaseStartingPrice.write(next_purchase_starting_price)
     priceDecayStartBlock.write(price_decay_start_block)
     lastPurchaseBlock.write(last_purchase_block)
 
     # hook for caller to do sth with ETH based on price paid
-    afterMint(priceScaled)
+    afterMint(price)
 
     # issue refund
     # no such thing as msg.value/msg.sender.call on starknet yet
 
-    return (npse)
+    return ()
 end
 
 func afterMint{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(priceScaled: felt) -> ():
