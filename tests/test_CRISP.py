@@ -138,14 +138,14 @@ async def test_price_decay_above_target_rate():
     print("=========TEST 1: test_price_decay_above_target_rate============\n")
     pdsb = await contract.getPriceDecayStartBlock().call()
     print("PDSB = " + str(pdsb.result))
-    
-    await contract.mint().invoke()
+    testing = await contract.mint().invoke()
+    print("NPSP in MINT = " + str(testing.result))
     initial_price = await contract.getQuote().call()
     pdsb = await contract.getPriceDecayStartBlock().call()
     print("PDSB = " + str(pdsb.result) + "|||| INITIAL_PRICE: " + str(initial_price.result))
     set_block_number(starknet.state, 50, 11)
     final_price = await contract.getQuote().call()
-    pdsb = await contract.getPriceDecayStartBlock().call()
+    # pdsb = await contract.getPriceDecayStartBlock().call()
     print("PDSB = " + str(pdsb.result) + "|||| FINAL_PRICE: " + str(final_price.result))
     
     assert (initial_price.result == final_price.result)

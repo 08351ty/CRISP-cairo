@@ -208,7 +208,7 @@ func getQuote{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}
         let (res: felt) = Math64x61_mul(next_purchase_starting_price, exp_decay)
 
         tempvar range_check_ptr = range_check_ptr
-        result = 1
+        result = res
     end
     return (result)
 
@@ -228,7 +228,7 @@ func getNextStartingPrice{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, rang
     let (local is_before: felt) = is_le(mismatchRatio, fp_one)
 
     if is_before == 0:
-        let (ratio: felt) = Math64x61_mul(mismatchRatio, price_speed)
+        let (ratio: felt) = Math64x61_mul(mismatchRatio, price_speed) #ratio = 9.42
         let (multiplier: felt) = Math64x61_add(fp_one, ratio)
         let (res: felt) = Math64x61_mul(lastPurchasePrice, multiplier)
         result = res
@@ -271,7 +271,7 @@ func getPriceDecayStartBlock{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, ran
 end
 
 @external
-func mint{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() -> ():
+func mint{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() -> (i: felt):
     alloc_locals
     let (local price: felt) = getQuote()
     let (local fp_one: felt) = Math64x61_fromFelt(1)
@@ -301,7 +301,7 @@ func mint{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() -> 
     # issue refund
     # no such thing as msg.value/msg.sender.call on starknet yet
 
-    return ()
+    return (next_purchase_starting_price)
 end
 
 func afterMint{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(priceScaled: felt) -> ():
@@ -358,5 +358,6 @@ end
 
 @view
 func getNextPurchaseStartingPrice{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() -> (i : felt):
-    return nextPurchaseStartingPrice.read()
+    let (x: felt) = nextPurchaseStartingPrice.read()
+    return (x)
 end
