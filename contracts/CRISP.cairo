@@ -287,12 +287,15 @@ func mint{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() -> 
     # update state
     let (get_current_ems: felt) = getCurrentEMS()
     let (next_purchase_starting_ems: felt) = Math64x61_add(get_current_ems, fp_one)
-    let (next_purchase_starting_price: felt) = getNextStartingPrice(price)
+    nextPurchaseStartingEMS.write(next_purchase_starting_ems)
+    
 
 
     # updating CRISP state
-    nextPurchaseStartingEMS.write(next_purchase_starting_ems)
+    let (next_purchase_starting_price: felt) = getNextStartingPrice(price)
     nextPurchaseStartingPrice.write(next_purchase_starting_price)
+    
+
     lastPurchaseBlock.write(last_purchase_block)
 
     let (price_decay_start_block: felt) = getPriceDecayStartBlock()
