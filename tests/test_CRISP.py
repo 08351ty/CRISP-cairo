@@ -119,51 +119,115 @@ async def contract_factory():
 # TEST 1 #
 ##########
 # test starting price
-@pytest.mark.asyncio
-async def test_starting_price():
-    starknet, contract = await contract_factory()
-    print("=========test_starting_price============")
-    price = await contract.getQuote().call()
-    # print("test_starting_price: " + str(price.result))
-    # assert that starting price == 100 (in FP representation)
-    assert (price.result == (230584300921369395200, ))
-
-##########
-# TEST 2 #
-##########
-# test price doesn't decay when above target sales rate
-@pytest.mark.asyncio
-async def test_price_decay_above_target_rate():
-    starknet, contract = await contract_factory()
-    print("=========TEST 1: test_price_decay_above_target_rate============\n")
-    pdsb = await contract.getPriceDecayStartBlock().call()
-    print("PDSB = " + str(pdsb.result))
-    testing = await contract.mint().invoke()
-    print("NPSP in MINT = " + str(testing.result))
-    initial_price = await contract.getQuote().call()
-    pdsb = await contract.getPriceDecayStartBlock().call()
-    print("PDSB = " + str(pdsb.result) + "|||| INITIAL_PRICE: " + str(initial_price.result))
-    set_block_number(starknet.state, 50, 11)
-    final_price = await contract.getQuote().call()
-    # pdsb = await contract.getPriceDecayStartBlock().call()
-    print("PDSB = " + str(pdsb.result) + "|||| FINAL_PRICE: " + str(final_price.result))
-    
-    assert (initial_price.result == final_price.result)
-    print("========TEST 1: SUCCESSFUL============\n")
-
 # @pytest.mark.asyncio
-# async def test_get_current_ems():
+# async def test_starting_price():
 #     starknet, contract = await contract_factory()
-#     initial_ems = await contract.getCurrentEMS().call()
-#     print("\ninitial EMS = " + str(initial_ems.result))
-#     assert(initial_ems.result == (24458342382994991430, ))
+#     print("=========test_starting_price============")
+#     price = await contract.getQuote().call()
+#     # print("test_starting_price: " + str(price.result))
+#     # assert that starting price == 100 (in FP representation)
+#     assert (price.result == (230584300921369395200, ))
 
-
+# ##########
+# # TEST 2 #
+# ##########
+# # test price doesn't decay when above target sales rate
 # @pytest.mark.asyncio
-# async def test_get_current_ems():
+# async def test_price_decay_above_target_rate():
+#     starknet, contract = await contract_factory()
+#     # print("=========TEST 1: test_price_decay_above_target_rate============\n")
+#     await contract.mint().invoke()
+#     # print("NPSP in MINT = " + str(testing.result))
+#     initial_price = await contract.getQuote().call()
+#     # pdsb = await contract.getPriceDecayStartBlock().call()
+#     # print("PDSB = " + str(pdsb.result) + "|||| INITIAL_PRICE: " + str(initial_price.result))
+#     set_block_number(starknet.state, 50, 11)
+#     final_price = await contract.getQuote().call()
+#     # pdsb = await contract.getPriceDecayStartBlock().call()
+#     # print("PDSB = " + str(pdsb.result) + "|||| FINAL_PRICE: " + str(final_price.result))
+    
+#     assert (initial_price.result == final_price.result)
+#     print("========TEST 1: SUCCESSFUL============")
 
+
+# ##########
+# # TEST 3 #
+# ##########
+# # test price decays when actual sales rate below target sales rate
 # @pytest.mark.asyncio
-# async def test_get_current_ems():
+# async def test_price_decay_below_target_rate():
+#     starknet, contract = await contract_factory()
+#     print("=========TEST 2: test_price_decay_below_target_rate============")
+#     await contract.mint().invoke()
+#     initial_price = await contract.getQuote().call()
+#     set_block_number(starknet.state, 200, 11)
+#     final_price = await contract.getQuote().call()
+#     assert (initial_price.result > final_price.result)
+
+# ##########
+# # TEST 4 #
+# ##########
+# # test price increases when minting above target rate
+# @pytest.mark.asyncio
+# async def test_price_increase_above_target_rate():
+#     starknet, contract = await contract_factory()
+#     print("=========TEST 3: test_price_increase_above_target_rate============")
+#     await contract.mint().invoke()
+#     set_block_number(starknet.state, 1, 11)
+#     initial_price = await contract.getQuote().call()
+#     await contract.mint().invoke()
+#     final_price = await contract.getQuote().call()
+#     assert (initial_price.result < final_price.result)
+
+##########
+# TEST 5 #
+##########
+# test price does not increase when minting below target rate
+# @pytest.mark.asyncio
+# async def test_price_increase_below_target_rate():
+#     starknet, contract = await contract_factory()
+#     print("=========TEST 4: test_price_increase_below_target_rate============")
+#     await contract.mint().invoke()
+#     set_block_number(starknet.state, 1000, 11)
+#     initial_price = await contract.getQuote().call()
+
+#     gnpsp = await contract.getNextPurchaseStartingPrice().call()
+#     print("npsp = " + str(gnpsp.result) + "||||| initial_price" + str(initial_price.result))
+
+#     await contract.mint().invoke()
+    
+#     gnpsp = await contract.getNextPurchaseStartingPrice().call()
+#     final_price = await contract.getQuote().call()
+#     print("npsp = " + str(gnpsp.result) + "|||| final_price" + str(final_price.result))
+#     assert (initial_price.result == final_price.result)
+
+# ##########
+# # TEST 6 #
+# ##########
+# # test EMS decays over time
+@pytest.mark.asyncio
+async def test_ems_decay():
+    starknet, contract = await contract_factory()
+    print("=========TEST 5: test_ems_decay============")
+    starting_ems = await contract.getCurrentEMS().call()
+    print("starting_ems = " + str(starting_ems.result))
+    set_block_number(starknet.state, 100, 11)
+    final_ems = await contract.getCurrentEMS().call()
+    assert (starting_ems.result > final_ems.result)
+
+############
+# # TEST 7 #
+# ##########
+# # test EMS increases after every purchase
+@pytest.mark.asyncio
+async def test_ems_increase():
+    starknet, contract = await contract_factory()
+    print("=========TEST 6: test_ems_increase============")
+    starting_ems = await contract.getCurrentEMS().call()
+    contract.mint().invoke()
+    final_ems = await contract.getCurrentEMS().call()
+    assert (starting_ems.result < final_ems.result)
+
 
 
 
